@@ -31,6 +31,7 @@ public class User {
     }
 
     public void setAddress(Map<String, String> address) {
+        address.toString();
         this.address = address;
     }
 
