@@ -26,20 +26,37 @@ public class ExtractYamlData {
             PrintWriter out = new PrintWriter("country_data.csv");
             File directory = new File("sri_lanka");
             File[] files = directory.listFiles();
-
+            int count = files.length;
+            System.out.println(count);
             StringWriter sw = new StringWriter();
             CsvMapWriter writer = new CsvMapWriter(sw, CsvPreference.STANDARD_PREFERENCE);
 
-            String[] headers = {"city", "dates", "gender", "match_type", "outcome", "overs", "player_of_match", "teams", "toss", "umpires", "venue"};
+            String[] headers = {"city", "dates", "gender", "match_type", "outcome", "overs", "player_of_match", "teams", "toss", "umpires", "venue", "winner", "opposition"};
             writer.writeHeader(headers);
 
-            for(File file:files) {
+            for (File file : files) {
+
                 Country country = mapper.readValue(file, Country.class);
+
+                country.getInfo().put("dates", country.getInfo().get("dates").toString().replace("[", ""));
+                country.getInfo().put("dates", country.getInfo().get("dates").toString().replace("]", ""));
+
+                String winner = country.getInfo().get("outcome").toString().substring(country.getInfo().get("outcome").toString().lastIndexOf("=") + 1).replace("}", "");
+                country.getInfo().put("winner", winner);
+
+                country.getInfo().put("teams", country.getInfo().get("teams").toString().replace("[", ""));
+                country.getInfo().put("teams", country.getInfo().get("teams").toString().replace("]", ""));
+                String split[] = country.getInfo().get("teams").toString().split(",");
+                if (split[0].contains("Sri")) {
+                    country.getInfo().put("opposition", split[1]);
+                } else {
+                    country.getInfo().put("opposition", split[0]);
+                }
+
                 writer.write(country.getInfo(), headers);
                 out.print(sw.toString());
-                LOGGER.info("Extracted data from: "+file.getName());
+                LOGGER.info("Extracted data from: " + file.getName());
             }
-
             writer.close();
             out.close();
 
