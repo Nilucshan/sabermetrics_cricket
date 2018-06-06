@@ -26,8 +26,6 @@ public class ExtractYamlData {
             PrintWriter out = new PrintWriter("country_data.csv");
             File directory = new File("sri_lanka");
             File[] files = directory.listFiles();
-            int count = files.length;
-            System.out.println(count);
             StringWriter sw = new StringWriter();
             CsvMapWriter writer = new CsvMapWriter(sw, CsvPreference.STANDARD_PREFERENCE);
 
