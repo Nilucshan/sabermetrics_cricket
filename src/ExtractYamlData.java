@@ -35,7 +35,6 @@ public class ExtractYamlData {
             for (File file : files) {
 
                 Country country = mapper.readValue(file, Country.class);
-
                 country.getInfo().put("dates", country.getInfo().get("dates").toString().replace("[", ""));
                 country.getInfo().put("dates", country.getInfo().get("dates").toString().replace("]", ""));
 
@@ -44,17 +43,29 @@ public class ExtractYamlData {
 
                 country.getInfo().put("teams", country.getInfo().get("teams").toString().replace("[", ""));
                 country.getInfo().put("teams", country.getInfo().get("teams").toString().replace("]", ""));
-                String split[] = country.getInfo().get("teams").toString().split(",");
-                if (split[0].contains("Sri")) {
-                    country.getInfo().put("opposition", split[1]);
+                String oppositionSplit[] = country.getInfo().get("teams").toString().split(",");
+                if (oppositionSplit[0].contains("Sri")) {
+                    country.getInfo().put("opposition", oppositionSplit[1]);
                 } else {
-                    country.getInfo().put("opposition", split[0]);
+                    country.getInfo().put("opposition", oppositionSplit[0]);
+                }
+
+                country.getInfo().put("toss", country.getInfo().get("toss").toString().replace("{", ""));
+                country.getInfo().put("toss", country.getInfo().get("toss").toString().replace("}", ""));
+                String[] tossSplit = country.getInfo().get("toss").toString().split(",");
+                if (tossSplit[0].contains("winner")) {
+                    country.getInfo().put("toss_winner", tossSplit[0].replace("winner=", ""));
+                    country.getInfo().put("toss_decision", tossSplit[1].replace("decision=", ""));
+                } else {
+                    country.getInfo().put("toss_winner", tossSplit[1].replace("winner=", ""));
+                    country.getInfo().put("toss_decision", tossSplit[0].replace("decision=", ""));
                 }
 
                 writer.write(country.getInfo(), headers);
                 out.print(sw.toString());
                 LOGGER.info("Extracted data from: " + file.getName());
             }
+
             writer.close();
             out.close();
 
