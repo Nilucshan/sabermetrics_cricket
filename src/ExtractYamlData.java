@@ -29,7 +29,7 @@ public class ExtractYamlData {
             StringWriter sw = new StringWriter();
             CsvMapWriter writer = new CsvMapWriter(sw, CsvPreference.STANDARD_PREFERENCE);
 
-            String[] headers = {"city", "dates", "gender", "match_type", "outcome", "overs", "player_of_match", "teams", "toss", "umpires", "venue", "winner", "opposition"};
+            String[] headers = {"city", "dates", "match_type", "outcome", "overs", "player_of_match", "venue", "winner", "opposition","toss_winner","toss_decision"};
             writer.writeHeader(headers);
 
             for (File file : files) {
