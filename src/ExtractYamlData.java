@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -29,7 +28,7 @@ public class ExtractYamlData {
             StringWriter sw = new StringWriter();
             CsvMapWriter writer = new CsvMapWriter(sw, CsvPreference.STANDARD_PREFERENCE);
 
-            String[] headers = {"city", "dates", "match_type", "outcome", "overs", "player_of_match", "venue", "winner", "opposition","toss_winner","toss_decision"};
+            String[] headers = {"city", "dates", "match_type", "outcome", "overs", "player_of_match", "venue", "winner", "opposition", "toss_winner", "toss_decision", "total_runs", "opposition_runs"};
             writer.writeHeader(headers);
 
             for (File file : files) {
@@ -59,6 +58,41 @@ public class ExtractYamlData {
                 } else {
                     country.getInfo().put("toss_winner", tossSplit[1].replace("winner=", ""));
                     country.getInfo().put("toss_decision", tossSplit[0].replace("decision=", ""));
+                }
+
+                //extracting the total runs
+                String[] deliveries1stInnings = country.getInnings().get("1st innings").get("deliveries").toString().split(",");
+                int deliveriesLength1stInnings = 0;
+                int totalRuns1stInnings = 0;
+
+                while (deliveriesLength1stInnings < deliveries1stInnings.length) {
+                    if (deliveries1stInnings[deliveriesLength1stInnings].contains("total=")) {
+                        String tempString = deliveries1stInnings[deliveriesLength1stInnings].substring(deliveries1stInnings[deliveriesLength1stInnings].lastIndexOf("=") + 1).replace("]", "");
+                        tempString = tempString.replace("}", "");
+                        totalRuns1stInnings = totalRuns1stInnings + Integer.parseInt(tempString);
+                    }
+                    deliveriesLength1stInnings++;
+                }
+
+                String[] deliveries2ndInnings = country.getInnings().get("2nd innings").get("deliveries").toString().split(",");
+                int deliveriesLength2ndInnings = 0;
+                int totalRuns2ndInnings = 0;
+
+                while (deliveriesLength2ndInnings < deliveries2ndInnings.length) {
+                    if (deliveries2ndInnings[deliveriesLength2ndInnings].contains("total=")) {
+                        String tempString = deliveries2ndInnings[deliveriesLength2ndInnings].substring(deliveries2ndInnings[deliveriesLength2ndInnings].lastIndexOf("=") + 1).replace("]", "");
+                        tempString = tempString.replace("}", "");
+                        totalRuns2ndInnings = totalRuns2ndInnings + Integer.parseInt(tempString);
+                    }
+                    deliveriesLength2ndInnings++;
+                }
+
+                if (country.getInfo().get("winner").toString().equalsIgnoreCase("sri lanka")) {
+                    country.getInfo().put("total_runs", totalRuns1stInnings > totalRuns2ndInnings ? totalRuns1stInnings : totalRuns2ndInnings);
+                    country.getInfo().put("opposition_runs", totalRuns1stInnings < totalRuns2ndInnings ? totalRuns1stInnings : totalRuns2ndInnings);
+                } else {
+                    country.getInfo().put("opposition_runs", totalRuns1stInnings > totalRuns2ndInnings ? totalRuns1stInnings : totalRuns2ndInnings);
+                    country.getInfo().put("total_runs", totalRuns1stInnings < totalRuns2ndInnings ? totalRuns1stInnings : totalRuns2ndInnings);
                 }
 
                 writer.write(country.getInfo(), headers);
