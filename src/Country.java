@@ -8,7 +8,7 @@ import java.util.Set;
 public class Country {
 
     private Map<String,Object> info;
-    private  Map<String,Map<String,Object>> innings;
+    //private  Map<String,Map<String,Object>> innings;
 
     public Map<String, Object> getInfo() {
         return info;
@@ -19,11 +19,11 @@ public class Country {
     }
 
 
-    public Map<String, Map<String, Object>> getInnings() {
-        return innings;
-    }
-
-    public void setInnings(Map<String, Map<String, Object>> innings) {
-        this.innings = innings;
-    }
+//    public Map<String, Map<String, Object>> getInnings() {
+//        return innings;
+//    }
+//
+//    public void setInnings(Map<String, Map<String, Object>> innings) {
+//        this.innings = innings;
+//    }
 }
