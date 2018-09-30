@@ -30,6 +30,6 @@ rules <- apriori(transaction_data, parameter = list(supp = 0.001, conf = 0.5))
 #################### RUN INTO IDLE STATE ###########################
 #redundant_rules <- which(colSums(is.subset(rules, rules)) > 1)
 
-#finding rules against specific
-
+#Writing rules to a file
+write(rules,file = "association_rules.csv",sep = ",",quote = TRUE,row.names = FALSE) 
 

@@ -82,7 +82,6 @@ train_tot <- sri_lanka_all[tot_train_index,]
 test_tot <- sri_lanka_all[-tot_train_index,]
 
 #splitting country wise dataset into train and test data 75% Train 25% Test
-
 ind <- sample(seq_len(nrow(opp_afgh)), size = floor(0.75*nrow(opp_afgh)))
 train_afgh <- opp_afgh[ind,]
 test_afgh <- opp_afgh[-ind,]
@@ -170,10 +169,3 @@ test_wi <- opp_wi[-ind,]
 ind <- sample(seq_len(nrow(opp_zimb)), size = floor(0.75*nrow(opp_zimb)))
 train_zimb <- opp_zimb[ind,]
 test_zimb <- opp_zimb[-ind,]
-
-
-
-
-
-
-
