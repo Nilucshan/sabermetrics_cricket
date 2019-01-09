@@ -1,8 +1,10 @@
 #Author : Nilucshan Siva
-#This script is used to prepare the data set for the analysis
+#This script is used to perform logistic regression analysis
 
+library(caTools)
 library(dplyr)
 
+#source("data_preprocess_new.R")
 #loading the data from .csv file
 sri_lanka_all <- read.csv("sri_lanka.csv")
 
@@ -49,36 +51,21 @@ sri_lanka_all <- unique(sri_lanka_all)
 #identifying oppositions
 opposition <- unique(sri_lanka_all$opposition)
 
-#making relevant columns to categorical values
-sri_lanka_all$city <- as.factor(sri_lanka_all$city)
-sri_lanka_all$match_type <- as.factor(sri_lanka_all$match_type)
-sri_lanka_all$overs <- as.factor(sri_lanka_all$overs)
-sri_lanka_all$venue <- as.factor(sri_lanka_all$venue)
-sri_lanka_all$winner <- as.factor(sri_lanka_all$winner)
-sri_lanka_all$opposition <- as.factor(sri_lanka_all$opposition)
-sri_lanka_all$toss_winner <- as.factor(sri_lanka_all$toss_winner)
-sri_lanka_all$toss_decision <- as.factor(sri_lanka_all$toss_decision)
 
-#filtering data country wise
-opp_aus <- filter(sri_lanka_all, sri_lanka_all$opposition == "Australia")
-opp_sa <- filter(sri_lanka_all, sri_lanka_all$opposition == "SouthAfrica")
-opp_ind <- filter(sri_lanka_all, sri_lanka_all$opposition == "India")
-opp_pak <- filter(sri_lanka_all, sri_lanka_all$opposition == "Pakistan")
-opp_eng <- filter(sri_lanka_all, sri_lanka_all$opposition == "England")
-opp_zimb <- filter(sri_lanka_all, sri_lanka_all$opposition == "Zimbabwe")
-opp_wi <- filter(sri_lanka_all, sri_lanka_all$opposition == "WestIndies")
-opp_ire <- filter(sri_lanka_all, sri_lanka_all$opposition == "Ireland")
-opp_thai <- filter(sri_lanka_all, sri_lanka_all$opposition == "Thailand")
-opp_bang <- filter(sri_lanka_all, sri_lanka_all$opposition == "Bangladesh")
-opp_newz <- filter(sri_lanka_all, sri_lanka_all$opposition == "NewZealand")
-opp_ber <- filter(sri_lanka_all, sri_lanka_all$opposition == "Bermuda")
-opp_kenya <- filter(sri_lanka_all, sri_lanka_all$opposition == "Kenya")
-opp_uae <- filter(sri_lanka_all, sri_lanka_all$opposition == "UnitedArabEmirates")
-opp_can <- filter(sri_lanka_all, sri_lanka_all$opposition == "Canada")
-opp_jap <- filter(sri_lanka_all, sri_lanka_all$opposition == "Japan")
-opp_neth <- filter(sri_lanka_all, sri_lanka_all$opposition == "Netherlands")
-opp_afgh <- filter(sri_lanka_all, sri_lanka_all$opposition == "Afghanistan")
-opp_scot <- filter(sri_lanka_all, sri_lanka_all$opposition == "Scotland")
-opp_hong <- filter(sri_lanka_all, sri_lanka_all$opposition == "HongKong")
-opp_chin <- filter(sri_lanka_all, sri_lanka_all$opposition == "China")
-opp_sk <- filter(sri_lanka_all, sri_lanka_all$opposition == "SouthKorea")
+sri_lanka_all$result <- ifelse(sri_lanka_all$winner == "SriLanka","yes","no")     #draw is considered as loss since it is an binomial classification
+sri_lanka_all$result <- as.factor(sri_lanka_all$result)
+
+#splitting the dataset into train and test
+split <- sample.split(sri_lanka_all, SplitRatio = 0.75)
+train <- subset(sri_lanka_all, split == "TRUE")
+test <- subset(sri_lanka_all, split == "FALSE")
+
+#train the model using training data
+#use glm the general linear model function
+#dependent variable is result
+model <- glm(result ~ city + match_type + overs + venue + opposition + toss_winner + toss_decision, data = train, family = "binomial")
+
+#model <- glm(result ~ city + match_type + overs + venue + opposition + toss_winner + toss_decision,family=binomial(link='logit'),data=train)
+
+summary(model)
+
