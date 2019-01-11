@@ -43,6 +43,15 @@ sri_lanka_all$opposition <- gsub('\\s+','',sri_lanka_all$opposition)
 sri_lanka_all$toss_winner <- gsub('\\s+','',sri_lanka_all$toss_winner)
 sri_lanka_all$toss_decision <- gsub('\\s+','',sri_lanka_all$toss_decision)
 
+#draw is represented in three values: draw, tie, noresult
+#all three levels are made into one level: draw
+sri_lanka_all$winner <- ifelse(sri_lanka_all$winner == "noresult" | sri_lanka_all$winner == "tie","draw",sri_lanka_all$winner)
+
+#adding a new column as result to show win, lose or draw
+sri_lanka_all$result <- ifelse(sri_lanka_all$winner == "SriLanka", "yes",ifelse(sri_lanka_all$winner == "draw" | sri_lanka_all$winner == "noresult", "draw","no"))
+
+sri_lanka_all$result <- as.factor(sri_lanka_all$result)
+
 #removing repeated data
 sri_lanka_all <- unique(sri_lanka_all)
 
